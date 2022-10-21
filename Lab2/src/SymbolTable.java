@@ -7,12 +7,12 @@ public class SymbolTable {
     public SymbolTable(int length) {
         this.length = length;
         this.hashTable = new ArrayList<>();
-        for(int i=0;i<length;i++) this.hashTable.add(new ArrayList<>());
+        for(int i=0; i<length; i++) this.hashTable.add(new ArrayList<>());
     }
 
     private int hash(String key) {
         int sum = 0;
-        for(int i=0;i< key.length();i++) sum += key.charAt(i);
+        for(int i=0; i< key.length(); i++) sum += key.charAt(i);
         return sum % length;
     }
 
