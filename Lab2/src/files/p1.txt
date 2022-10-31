@@ -1,0 +1,17 @@
+int a;
+int b;
+int c;
+int min;
+read(a);
+read(b);
+read(c);
+if (a<b) {
+	min=a;
+}
+else {
+	min=b;
+}
+if (c<min) {
+	min=c;
+}
+print(min);

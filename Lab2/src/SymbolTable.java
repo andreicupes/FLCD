@@ -61,6 +61,7 @@ public class SymbolTable {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
+        result.append("----------------------------------START OF SYMBOL TABLE----------------------------------\n");
         for (int i=0; i<length; i++) {
             result.append(i).append(": {");
             String separator = "";
@@ -71,6 +72,7 @@ public class SymbolTable {
             }
             result.append("}\n");
         }
+        result.append("----------------------------------END OF SYMBOL TABLE----------------------------------\n");
         return result.toString();
     }
 }
