@@ -42,6 +42,7 @@ public class MyScanner {
 
     public ArrayList<String> tokenize(String line) {
         ArrayList<String> tokens = new ArrayList<>();
+
         for (int i = 0; i < line.length(); i++) {
             //if our character is a separator then we add it as it is
             if (languageSpecification.isSeparator(String.valueOf(line.charAt(i))) && !(String.valueOf(line.charAt(i))).equals(" ")) {

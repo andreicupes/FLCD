@@ -6,7 +6,11 @@ public class LanguageSpecification {
     private final List<String> separators = Arrays.asList("(",")","[", "]","{", "}",";"," ","\n","\t");
     private final List<String> operators = Arrays.asList("+","-","*","/","%","=","==","!=","<",">","<=",">=");
     private final List<String> reservedWords = Arrays.asList("int","char","string","float","for","while","if","else","read","print");
+
     private final HashMap<String, Integer> langSpec = new HashMap<>();
+
+    private final FiniteAutomaton intDFA = new FiniteAutomaton("src/files/intDFA.in");
+    private final FiniteAutomaton identDFA = new FiniteAutomaton("src/files/identDFA.in");
 
     public LanguageSpecification() {
         buildSpecsTable();
@@ -44,22 +48,32 @@ public class LanguageSpecification {
     }
     public boolean isIdentifier(String token) {
         //an identifier starts with a letter, never a digit/another character
-        String pattern = "^[a-zA-Z]([a-z|A-Z|0-9|_])*$";
-        return token.matches(pattern);
+//        String pattern = "^[a-zA-Z]([a-z|A-Z|0-9|_])*$";
+//        return token.matches(pattern);
+
+//        System.out.println(identDFA.checkSequence(token));
+        return identDFA.checkSequence(token);
     }
 
     public boolean isConstant(String token) {
-        // we will use REGEX in order to verify if a token is valid
-
-        //a number can either be 0, can start with + or - and be followed by a natural value,
-        //can start directly with its natural value, can start with + or minus and be followed by a decimal value
-        //or can be a decimal value with no sign in front
-        String numericPattern = "^0|[1-9]([0-9])*|[+|-][1-9]([0-9])*|[1-9]([0-9])*\\.([0-9])*|[+|-][1-9]([0-9])*\\.([0-9])*$";
-        // if we find a char it can either be a digit, letter or a special character
-        String charPattern = "^\'[a-zA-Z0-9_?!#*./%+=<>;()\\[\\]{} ]\'";
-        // a string has the same configuration as a char but it has 1 or multiple chars in it
+//        // we will use REGEX in order to verify if a token is valid
+//
+//        //a number can either be 0, can start with + or - and be followed by a natural value,
+//        //can start directly with its natural value, can start with + or minus and be followed by a decimal value
+//        //or can be a decimal value with no sign in front
+//        String numericPattern = "^0|[1-9]([0-9])*|[+|-][1-9]([0-9])*|[1-9]([0-9])*\\.([0-9])*|[+|-][1-9]([0-9])*\\.([0-9])*$";
+//        // if we find a char it can either be a digit, letter or a special character
+//        String charPattern = "^\'[a-zA-Z0-9_?!#*./%+=<>;()\\[\\]{} ]\'";
+//        // a string has the same configuration as a char but it has 1 or multiple chars in it
+//        String stringPattern = "^\"[a-zA-Z0-9_?!#*./%+=<>;()\\[\\]{} ]+\"";
+//        return token.matches(numericPattern) || token.matches(charPattern) || token.matches(stringPattern);
         String stringPattern = "^\"[a-zA-Z0-9_?!#*./%+=<>;()\\[\\]{} ]+\"";
-        return token.matches(numericPattern) || token.matches(charPattern) || token.matches(stringPattern);
+        String charPattern = "^\'[a-zA-Z0-9_?!#*./%+=<>;()\\[\\]{} ]\'";
+        // we use intDFA to check if the token is a valid number
+        return intDFA.checkSequence(token) ||
+                token.matches(charPattern) ||
+                token.matches(stringPattern);
+
     }
 
     public Integer getCode(String token) {
