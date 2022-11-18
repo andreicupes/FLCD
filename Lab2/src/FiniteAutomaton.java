@@ -6,6 +6,7 @@ public class FiniteAutomaton {
     public String initialState;
     public Map<Pair<String, String>, Set<String>> transitions;
 
+    //we initialise all our fields
     public FiniteAutomaton(String filename) {
         this.states = new HashSet<>();
         this.alphabet = new HashSet<>();
@@ -15,6 +16,10 @@ public class FiniteAutomaton {
         readFiniteAutomaton(filename);
     }
 
+    //in order to read the file, we know the format of it, so on the first line we will have the states
+    //on the second line we will have the alphabet
+    //then the initial state
+    //and then the final states
     private void readFiniteAutomaton(String filename) {
         try {
             File file = new File(filename);
@@ -30,15 +35,15 @@ public class FiniteAutomaton {
 
             String finalStatesLine = reader.nextLine();
             finalStates = new HashSet<>(Arrays.asList(finalStatesLine.split(" ")));
-
+            //then we will go line by line again and break each line in 3, 2 states and the alphabet character between them
             while (reader.hasNextLine()) {
                 String transitionLine = reader.nextLine();
                 String[] transitionElements = transitionLine.split(" ");
-
+                //if our states and the character are valid (already defined)
                 if (states.contains(transitionElements[0]) && states.contains(transitionElements[2]) && alphabet.contains(transitionElements[1])) {
-
+                    //we create a new transition
                     Pair<String, String> transitionStates = new Pair<>(transitionElements[0], transitionElements[1]);
-
+                    //check if we already defined it and act accordingly
                     if (!transitions.containsKey(transitionStates)) {
                         Set<String> transitionStatesSet = new HashSet<>();
                         transitionStatesSet.add(transitionElements[2]);
@@ -52,7 +57,7 @@ public class FiniteAutomaton {
             ex.printStackTrace();
         }
     }
-
+    //string function for the alphabet
     public String writeAlphabet() {
         StringBuilder builder = new StringBuilder();
         builder.append("Alphabet: ");
@@ -62,7 +67,7 @@ public class FiniteAutomaton {
 
         return builder.toString();
     }
-
+    //string function for the states
     public String writeStates() {
         StringBuilder builder = new StringBuilder();
         builder.append("States: ");
@@ -72,7 +77,7 @@ public class FiniteAutomaton {
 
         return builder.toString();
     }
-
+    //string function for the final states
     public String writeFinalStates() {
         StringBuilder builder = new StringBuilder();
         builder.append("Final states: ");
@@ -82,7 +87,7 @@ public class FiniteAutomaton {
 
         return builder.toString();
     }
-
+    // string function for the transitions
     public String writeTransitions() {
         StringBuilder builder = new StringBuilder();
         builder.append("Transitions: \n");
@@ -92,11 +97,11 @@ public class FiniteAutomaton {
 
         return builder.toString();
     }
-
+    //in order to be a DFA each transition must have a singular value
     public boolean checkIfDFA() {
         return this.transitions.values().stream().noneMatch(list -> list.size() > 1);
     }
-
+    //we check it a sequence is valid by trying to get see if we can verify it through our given states
     public boolean checkSequence(String sequence) {
         if (sequence.length() == 0)
             return finalStates.contains(initialState);
