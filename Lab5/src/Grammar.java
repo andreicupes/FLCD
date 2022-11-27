@@ -16,25 +16,29 @@ public class Grammar {
         try{
             BufferedReader reader = new BufferedReader(new FileReader(filename));
 
+            //we parse the nonTerminals line
             String input = reader.readLine();
-            String[] NlineSplit = input.split("=",input.indexOf("="));
-            StringBuilder Nline = new StringBuilder();
-            for(int i=1;i<NlineSplit.length;++i)
-                Nline.append(NlineSplit[i]);
-            StringBuilder builder = new StringBuilder(Nline.toString());
-            builder.deleteCharAt(1).deleteCharAt(Nline.length()-2);
-            Nline = new StringBuilder(builder.toString());
-            this.N = new HashSet<>(Arrays.asList(Nline.toString().strip().split(" ")));
+            String[] nonTerminalsLineSplit = input.split("=",input.indexOf("="));
+            StringBuilder nonTerminalsLine = new StringBuilder();
+            for(int i=1;i<nonTerminalsLineSplit.length;++i)
+                nonTerminalsLine.append(nonTerminalsLineSplit[i]);
+            StringBuilder newStringBuilder = new StringBuilder(nonTerminalsLine.toString());
+            // we eliminate the curly bracketss
+            newStringBuilder.deleteCharAt(1).deleteCharAt(nonTerminalsLine.length()-2);
+            nonTerminalsLine = new StringBuilder(newStringBuilder.toString());
+            this.N = new HashSet<>(Arrays.asList(nonTerminalsLine.toString().strip().split(" ")));
 
+            //we parse the Terminals line
             input = reader.readLine();
-            String[] ElineSplit = input.split("=",input.indexOf("="));
-            StringBuilder Eline = new StringBuilder();
-            for(int i=1;i<ElineSplit.length;++i)
-                Eline.append(ElineSplit[i]);
-            builder = new StringBuilder(Eline.toString());
-            builder.deleteCharAt(1).deleteCharAt(Eline.length()-2);
-            Eline = new StringBuilder(builder.toString());
-            this.E = new HashSet<>(Arrays.asList(Eline.toString().strip().split(" ")));
+            String[] terminalsLineSplit = input.split("=",input.indexOf("="));
+            StringBuilder terminalsLine = new StringBuilder();
+            for(int i=1;i<terminalsLineSplit.length;++i)
+                terminalsLine.append(terminalsLineSplit[i]);
+            newStringBuilder = new StringBuilder(terminalsLine.toString());
+            // we eliminate the curly brackets
+            newStringBuilder.deleteCharAt(1).deleteCharAt(terminalsLine.length()-2);
+            terminalsLine = new StringBuilder(newStringBuilder.toString());
+            this.E = new HashSet<>(Arrays.asList(terminalsLine.toString().strip().split(" ")));
 
             this.S = reader.readLine().split("=")[1].strip();
 
@@ -42,17 +46,18 @@ public class Grammar {
             reader.readLine();
             String line = reader.readLine();
             while(line != null){
+                // while we are still not at the end
                 if(!line.equals("}")) {
                     String[] tokens = line.split("->");
                     String[] lhsTokens = tokens[0].split(",");
                     String[] rhsTokens = tokens[1].split("\\|");
-
+                    //we create the left-hand side of each production
                     Set<String> lhs = new HashSet<>();
                     for(String l : lhsTokens)
                         lhs.add(l.strip());
                     if(!P.containsKey(lhs))
                         P.put(lhs,new HashSet<>());
-
+                    //we get the right-hand side of each production
                     for(String rhsT : rhsTokens) {
                         ArrayList<String> productionElements = new ArrayList<>();
                         String[] rhsTokenElement = rhsT.strip().split(" ");
@@ -85,6 +90,8 @@ public class Grammar {
     }
 
     public String printProductions() {
+        // we will print each production by taking the pairs
+        // formed from the left-hand  side and the right-hand side
         StringBuilder sb = new StringBuilder("P = { \n");
         P.forEach((lhs, rhs) -> {
             sb.append("\t");
@@ -114,7 +121,8 @@ public class Grammar {
 
     public String printProductionsForNonTerminal(String nonTerminal){
         StringBuilder sb = new StringBuilder();
-
+        // for the given non-terminal we print the productions we have
+        // based on it being found on the left-hand side
         for(Set<String> lhs : P.keySet()) {
             if(lhs.contains(nonTerminal)) {
                 sb.append(nonTerminal).append(" -> ");
@@ -137,22 +145,27 @@ public class Grammar {
     //all left members have at most 1 terminal
     public boolean checkIfCFG(){
         var checkStartingSymbol = false;
+        //we check if we can find at least one left-hand side containing the starting symbol
         for(Set<String> lhs : P.keySet())
             if (lhs.contains(S)) {
                 checkStartingSymbol = true;
                 break;
             }
+        //otherwise we do not have a context free grammar
         if(!checkStartingSymbol)
             return false;
 
         for(Set<String> lhs : P.keySet()){
+            //if our left-hand side have more than 1 nonTerminal then we do not have CFG
             if(lhs.size()>1)
                 return false;
+            //or if the left-hand side cannot be found between out nonTerminals
             else if(!N.contains(lhs.iterator().next()))
                 return false;
 
             Set<List<String>> rhs = P.get(lhs);
-
+            // for our right-hand side we just need to check if we can find it between
+            // our terminals or nonTerminals
             for(List<String> rh : rhs) {
                 for (String r : rh) {
                     if(!(N.contains(r) || E.contains(r) || r.equals("epsilon")))
@@ -160,6 +173,7 @@ public class Grammar {
                 }
             }
         }
+        //if all the conditions have passed then we can confirm that de do have a context free grammar
         return true;
     }
 
