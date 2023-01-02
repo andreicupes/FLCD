@@ -67,9 +67,9 @@ public class Main {
         List<String> sequence = readText("src/resources/seq.txt");
 //        List<String> sequence = readPIF("src/resources/PIF.txt");
         System.out.println(parser.parseSequence(sequence));
-//        System.out.println(parser.getProductionsRhs());
+        System.out.println(parser.getProductionsRhs());
 
-        ParserOutput parserOutput = new ParserOutput(parser,sequence,"src/resources/out.txt");
+        ParserOutput parserOutput = new ParserOutput(parser,sequence,"src/resources/out1.txt");
         parserOutput.printTree();
     }
 }
